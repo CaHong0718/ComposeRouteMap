@@ -1,3 +1,10 @@
+import java.util.Properties
+
+//local properties load
+val props = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.example.composeroutemap"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.composeroutemap"
@@ -18,6 +25,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        //네이버 지도
+        manifestPlaceholders["NAVER_CLIENT_ID"] = props.getProperty("naver_api_key")
     }
 
     buildTypes {
@@ -59,6 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,4 +77,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //네이버 지도
+    implementation ("io.github.fornewid:naver-map-compose:1.8.2")
+    implementation ("io.github.fornewid:naver-map-location:16.0.0")
 }

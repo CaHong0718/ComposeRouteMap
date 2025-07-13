@@ -9,6 +9,11 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+
+        //네이버 지도 연결
+        maven {
+            url = uri("https://repository.map.naver.com/archive/maven")
+        }
     }
 }
 dependencyResolutionManagement {
@@ -16,6 +21,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        //네이버 지도 연결
+        maven {
+            url = uri("https://repository.map.naver.com/archive/maven")
+        }
     }
 }
 

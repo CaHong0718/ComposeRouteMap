@@ -12,6 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ComposeRouteMap"
         tools:targetApi="31">
+
+        <!-- 네이버 지도 관련 -->
+        <meta-data
+            android:name="com.naver.maps.map.NCP_KEY_ID"
+            android:value="${NAVER_CLIENT_ID}" />
+        <!-- _____________ -->
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,5 +31,9 @@
             </intent-filter>
         </activity>
     </application>
+
+    <!-- 위치 권한 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 </manifest>
