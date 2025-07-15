@@ -78,7 +78,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //네이버 지도
+    //네이버 지도/////////
     implementation ("io.github.fornewid:naver-map-compose:1.8.2")
     implementation ("io.github.fornewid:naver-map-location:16.0.0")
+    ////////////////////
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 }
