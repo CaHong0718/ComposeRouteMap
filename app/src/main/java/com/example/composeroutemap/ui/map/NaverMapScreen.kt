@@ -13,8 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.composeroutemap.data.Dimens.NormalPadding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -45,7 +45,7 @@ fun NaverMapScreen(viewModel: NaverMapViewModel) {
 fun MyLocationButton(modifier: Modifier,onClick: () -> Unit) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.padding(16.dp)
+        modifier = modifier.padding(NormalPadding)
     ) {
         Icon(imageVector = Icons.Default.LocationOn, contentDescription = "내 위치")
     }
