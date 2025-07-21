@@ -2,6 +2,7 @@ package com.example.composeroutemap.ui.map
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,19 +25,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.example.composeroutemap.R
 import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
 import com.example.composeroutemap.ui.customwidget.StatusBarScrim
+import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 
 @Composable
-fun NaverMapScreen(viewModel: NaverMapViewModel) {
+fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel) {
     val context = LocalContext.current
     val activity = context as Activity
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
@@ -58,7 +61,8 @@ fun NaverMapScreen(viewModel: NaverMapViewModel) {
                 .padding(horizontal = Dimens.NormalPadding, vertical = Dimens.BigPadding)
                 .align(Alignment.TopCenter)
                 .height(Dimens.TopBarHeight),
-            text = "장소, 주소 검색"
+            text = "장소, 주소 검색",
+            onClick = { onClickSearchBar(navController) }
         )
 
         MyLocationButton(
@@ -95,9 +99,9 @@ private fun onClickMyLocationButton(
 }
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, text: String) {
+fun SearchBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         shape = RoundedCornerShape(Dimens.SmallRoundedSize),
         color = Color.White,
         shadowElevation = Dimens.SmallShadowElevation,
@@ -119,6 +123,10 @@ fun SearchBar(modifier: Modifier = Modifier, text: String) {
             RouteMapIcon(R.drawable.location_1, Dimens.NormalIconSize)
         }
     }
+}
+
+private fun onClickSearchBar(navController: NavController){
+    navController.navigate(Screen.Search.route)
 }
 
 

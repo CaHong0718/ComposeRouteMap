@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.ui.map.NaverMapViewModel
 import com.example.composeroutemap.ui.map.NaverMapScreen
+import com.example.composeroutemap.ui.navigation.AppNavGraph
 import com.example.composeroutemap.ui.theme.ComposeRouteMapTheme
 import com.example.composeroutemap.utils.requestLocationPermissionsIfNeeded
 
@@ -21,15 +23,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposeRouteMapTheme{
-                val viewModel: NaverMapViewModel = viewModel()
-                val context = LocalContext.current
+                val navController = rememberNavController()
 
                 // 앱 시작 시 실행
                 LaunchedEffect(Unit) {
                     requestLocationPermissionsIfNeeded(this@MainActivity)
                 }
 
-                NaverMapScreen(viewModel = viewModel)
+                AppNavGraph(navController)
             }
         }
     }
