@@ -12,10 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,19 +28,18 @@ import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
-import com.example.composeroutemap.ui.customwidget.StatusBarScrim
 import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.naver.maps.map.MapView
 
 
 @Composable
-fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel) {
+fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, mapView: MapView) {
     val context = LocalContext.current
     val activity = context as Activity
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    val mapView = rememberMapViewWithLifecycle()
 
     StatusBarIconColor(activity, darkIcons = true)
 
