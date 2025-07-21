@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -29,6 +30,7 @@ import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
 import com.example.composeroutemap.ui.customwidget.StatusBarScrim
+import com.example.composeroutemap.ui.theme.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -70,9 +72,17 @@ fun NaverMapScreen(viewModel: NaverMapViewModel) {
 fun MyLocationButton(modifier: Modifier, onClick: () -> Unit) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier.padding(Dimens.NormalPadding)
+        modifier = modifier
+            .padding(
+                start = Dimens.NormalPadding,
+                bottom = Dimens.BigPadding + Dimens.SmallPadding
+            )
+            .size(Dimens.NormalFloatingButtonSize),
+        containerColor = Color.White,
+        contentColor = gray_900
+
     ) {
-        Icon(imageVector = Icons.Default.LocationOn, contentDescription = "내 위치")
+        RouteMapIcon(R.drawable.my_location, Dimens.NormalIconSize)
     }
 }
 

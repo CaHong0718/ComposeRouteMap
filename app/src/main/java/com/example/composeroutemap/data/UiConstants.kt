@@ -8,12 +8,15 @@ object Dimens {
     val BigPadding = 32.dp
 
     val NormalIconSize = 24.dp
+    val SubBigIconSize = 32.dp
 
     val SmallRoundedSize = 8.dp
 
     val SmallShadowElevation = 4.dp
 
     val TopBarHeight = 48.dp
+
+    val NormalFloatingButtonSize = 54.dp
 }
 
 object Weights {
