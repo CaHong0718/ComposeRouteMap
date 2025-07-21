@@ -22,12 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.composeroutemap.R
 import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
+import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
+import com.example.composeroutemap.ui.customwidget.StatusBarScrim
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -38,6 +39,8 @@ fun NaverMapScreen(viewModel: NaverMapViewModel) {
     val activity = context as Activity
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val mapView = rememberMapViewWithLifecycle()
+
+    StatusBarIconColor(activity, darkIcons = true)
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(factory = { mapView }) { view ->
@@ -90,7 +93,10 @@ fun SearchBar(modifier: Modifier = Modifier, text: String) {
         shadowElevation = Dimens.SmallShadowElevation,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = Dimens.NormalPadding, vertical = Dimens.SmallPadding),
+            modifier = Modifier.padding(
+                horizontal = Dimens.NormalPadding,
+                vertical = Dimens.SmallPadding
+            ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
