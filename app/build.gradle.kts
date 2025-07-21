@@ -8,6 +8,7 @@ val props = Properties().apply {
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.compose") version libs.versions.kotlin.get()
 }
 
 android {
@@ -83,6 +84,7 @@ dependencies {
     implementation ("io.github.fornewid:naver-map-location:16.0.0")
     ////////////////////
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.navigation:navigation-compose:2.7.7")

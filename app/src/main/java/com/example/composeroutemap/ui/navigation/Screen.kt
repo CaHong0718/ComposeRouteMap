@@ -3,6 +3,7 @@ package com.example.composeroutemap.ui.navigation
 import okhttp3.Route
 
 sealed class Screen(val route: String){
-    object Map      : Screen("map")
-    object Search   : Screen("search")
+    data object Splash      : Screen("splash")
+    data object Map         : Screen("map")
+    data object Search      : Screen("search")
 }

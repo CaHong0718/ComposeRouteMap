@@ -20,6 +20,7 @@ class NaverMapViewModel : ViewModel() {
         naverMap?.moveCamera(CameraUpdate.scrollTo(LatLng(lat, lng)))
     }
 
+    //TODO: 이부분 개선이 필요함. 위치 갱신 로직이 별로인 것 같음.
     @SuppressLint("MissingPermission")
     fun moveToCurrentLocation(
         context: Context,
@@ -40,7 +41,7 @@ class NaverMapViewModel : ViewModel() {
         naverMap.uiSettings.isLocationButtonEnabled = false
         naverMap.uiSettings.isZoomControlEnabled = false
 
-
+        //TODO: 초기 카메라 내 위치로 이동.
         if (hasLocationPermission(context)) {
             val locationSource = FusedLocationSource(activity, 1000)
             naverMap.locationSource = locationSource

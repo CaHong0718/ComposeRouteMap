@@ -25,11 +25,6 @@ class MainActivity : ComponentActivity() {
             ComposeRouteMapTheme{
                 val navController = rememberNavController()
 
-                // 앱 시작 시 실행
-                LaunchedEffect(Unit) {
-                    requestLocationPermissionsIfNeeded(this@MainActivity)
-                }
-
                 AppNavGraph(navController)
             }
         }
