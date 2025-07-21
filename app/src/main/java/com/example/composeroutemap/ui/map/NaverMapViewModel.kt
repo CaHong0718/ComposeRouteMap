@@ -40,11 +40,13 @@ class NaverMapViewModel : ViewModel() {
         naverMap.uiSettings.isLocationButtonEnabled = false
         naverMap.uiSettings.isZoomControlEnabled = false
 
-        //TODO: 트래킹 막아야함
+        /* Disable Tracking Mode ////////////////
         if (hasLocationPermission(context)) {
             val locationSource = FusedLocationSource(activity, 1000)
             naverMap.locationSource = locationSource
             naverMap.locationTrackingMode = LocationTrackingMode.Follow
         }
+         *///////////////////////////////////////
+
     }
 }
