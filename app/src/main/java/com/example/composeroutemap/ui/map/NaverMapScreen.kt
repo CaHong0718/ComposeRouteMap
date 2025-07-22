@@ -39,7 +39,6 @@ import com.naver.maps.map.MapView
 fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, mapView: MapView) {
     val context = LocalContext.current
     val activity = context as Activity
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
     StatusBarIconColor(activity, darkIcons = true)
 
@@ -47,7 +46,7 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
         AndroidView(factory = { mapView }) { view ->
             view.getMapAsync { naverMap ->
                 viewModel.naverMap = naverMap
-                viewModel.setupNaverMap(activity, context, naverMap)
+                viewModel.setupNaverMap(context, naverMap)
             }
         }
 
@@ -63,7 +62,7 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
 
         MyLocationButton(
             modifier = Modifier.align(Alignment.BottomStart),
-            onClick = { onClickMyLocationButton(viewModel, context, fusedLocationClient) }
+            onClick = { onClickMyLocationButton(viewModel, context) }
         )
     }
 }
@@ -89,9 +88,8 @@ fun MyLocationButton(modifier: Modifier, onClick: () -> Unit) {
 private fun onClickMyLocationButton(
     viewModel: NaverMapViewModel,
     context: Context,
-    fusedLocationClient: FusedLocationProviderClient
 ) {
-    viewModel.moveToCurrentLocation(context, fusedLocationClient)
+    viewModel.moveToCurrentLocation(context)
 }
 
 @Composable

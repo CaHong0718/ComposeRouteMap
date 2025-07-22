@@ -1,5 +1,6 @@
 package com.example.composeroutemap.ui.splash
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,7 @@ class SplashViewModel(application: Application) : AndroidViewModel(application){
 
     var ready by mutableStateOf(false)
 
+    @SuppressLint("MissingPermission")
     fun fetchCurrentLocation() = viewModelScope.launch {
         // lastLocation 없으면 최신 위치 1회 요청
         val loc = fused.lastLocation.await()

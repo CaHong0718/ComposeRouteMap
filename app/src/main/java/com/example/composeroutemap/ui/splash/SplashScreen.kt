@@ -1,5 +1,6 @@
 package com.example.composeroutemap.ui.splash
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.window.SplashScreen
 import androidx.activity.ComponentActivity
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.composeroutemap.data.LocationStore
 import com.example.composeroutemap.utils.requestLocationPermissionsIfNeeded
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun SplashScreen(onReady:() -> Unit){
     val activity = LocalContext.current as ComponentActivity
@@ -23,7 +25,7 @@ fun SplashScreen(onReady:() -> Unit){
 
     // ready Flag 가 True -> 화면 전환
     LaunchedEffect(viewModel.ready) { if(viewModel.ready) onReady() }
-    //Todo: 최소 시간이 필요해 보임. 1~2초 생각중
+    //Todo: 최소 시간이 필요해 보임. 1~2초 당장은 구현 필요 없어 보임.
 
     //Todo: Ui 만들기
 }

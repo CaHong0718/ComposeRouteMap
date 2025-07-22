@@ -17,6 +17,8 @@ object Dimens {
     val TopBarHeight = 48.dp
 
     val NormalFloatingButtonSize = 54.dp
+
+    val MyLocationMarkerSize = 58
 }
 
 object Weights {
