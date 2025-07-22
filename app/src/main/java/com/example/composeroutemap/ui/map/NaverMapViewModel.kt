@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.LocationStore
 import com.example.composeroutemap.data.MapMarkers
 import com.example.composeroutemap.utils.checkLocationPermissionAnd
@@ -20,7 +21,9 @@ class NaverMapViewModel : ViewModel() {
     var naverMap: NaverMap? = null
 
     private fun moveToMyLocation(lat: Double, lng: Double) {
-        naverMap?.moveCamera(CameraUpdate.scrollTo(LatLng(lat, lng)))
+        val update = CameraUpdate.scrollAndZoomTo(LatLng(lat, lng), Dimens.DefaultCameraZoom)
+
+        naverMap?.moveCamera(update)
     }
 
     fun moveToCurrentLocation(context: Context, ) {
@@ -38,6 +41,7 @@ class NaverMapViewModel : ViewModel() {
             /*val locationSource = FusedLocationSource(activity, 1000)
             naverMap.locationSource = locationSource
             naverMap.locationTrackingMode = LocationTrackingMode.Follow*/
+
             LocationStore.current?.let { moveToMyLocation(it.latitude, it.longitude) }
 
             MapMarkers.myLocationMarker.apply {

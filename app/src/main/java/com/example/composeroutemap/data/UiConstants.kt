@@ -19,6 +19,8 @@ object Dimens {
     val NormalFloatingButtonSize = 54.dp
 
     val MyLocationMarkerSize = 58
+
+    val DefaultCameraZoom:Double = 14.0
 }
 
 object Weights {
