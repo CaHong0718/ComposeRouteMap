@@ -30,8 +30,6 @@ import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
 import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.*
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.naver.maps.map.MapView
 
 
@@ -53,7 +51,7 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens.NormalPadding, vertical = Dimens.BigPadding)
+                .padding(horizontal = Dimens.NormalPadding, vertical = Dimens.LargePadding)
                 .align(Alignment.TopCenter)
                 .height(Dimens.TopBarHeight),
             text = "장소, 주소 검색",
@@ -74,7 +72,7 @@ fun MyLocationButton(modifier: Modifier, onClick: () -> Unit) {
         modifier = modifier
             .padding(
                 start = Dimens.NormalPadding,
-                bottom = Dimens.BigPadding + Dimens.SmallPadding
+                bottom = Dimens.LargePadding + Dimens.SmallPadding
             )
             .size(Dimens.NormalFloatingButtonSize),
         containerColor = Color.White,

@@ -36,6 +36,6 @@ fun AppNavGraph(navController: NavHostController) {
                 mapView = mapView
             )
         }
-        composable(Screen.Search.route)     {SearchScreen() }
+        composable(Screen.Search.route)     { SearchScreen(navController = navController) }
     }
 }
