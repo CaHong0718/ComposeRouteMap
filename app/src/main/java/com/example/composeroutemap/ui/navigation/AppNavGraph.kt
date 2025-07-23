@@ -15,6 +15,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Right
 import com.example.composeroutemap.data.AnimationDelay
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
+import com.example.composeroutemap.ui.search.PlaceSearchScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -23,41 +24,34 @@ fun AppNavGraph(navController: NavHostController) {
     val mapView = rememberMapViewWithLifecycle()
 
     NavHost(navController, startDestination = Screen.Splash.route) {
-        composable(Screen.Splash.route)     {
+        composable(Screen.Splash.route) {
             SplashScreen(
-                onReady = { navController.navigate(Screen.Map.route){
-                    popUpTo(Screen.Splash.route) {inclusive = true}
-                    launchSingleTop = true
-                } }
-            )
+                onReady = {
+                    navController.navigate(Screen.Map.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                })
         }
 
-        composable(
-            route = Screen.Map.route,
-            exitTransition = {
-                slideOutOfContainer(Left, tween(AnimationDelay.NormalDelay))
-            },
-            popEnterTransition = {
-                slideIntoContainer(Right, tween(AnimationDelay.NormalDelay))
-            }
-        ){
+        composable(route = Screen.Map.route, exitTransition = {
+            slideOutOfContainer(Left, tween(AnimationDelay.NormalDelay))
+        }, popEnterTransition = {
+            slideIntoContainer(Right, tween(AnimationDelay.NormalDelay))
+        }) {
             val viewModel: NaverMapViewModel = viewModel()
 
             NaverMapScreen(
-                navController = navController,
-                viewModel = viewModel,
-                mapView = mapView
+                navController = navController, viewModel = viewModel, mapView = mapView
             )
         }
 
-        composable(
-            route = Screen.Search.route,
-            enterTransition = {
-                slideIntoContainer(Left, tween(AnimationDelay.NormalDelay))
-            },
-            popExitTransition = {
-                slideOutOfContainer(Right, tween(AnimationDelay.NormalDelay))
-            }
-        ){ SearchScreen(navController = navController) }
+        composable(route = Screen.Search.route, enterTransition = {
+            slideIntoContainer(Left, tween(AnimationDelay.NormalDelay))
+        }, popExitTransition = {
+            slideOutOfContainer(Right, tween(AnimationDelay.NormalDelay))
+        }) { SearchScreen(navController = navController) }
+
+        composable(route = Screen.PlaceSearch.route) { PlaceSearchScreen(navController = navController) }
     }
 }

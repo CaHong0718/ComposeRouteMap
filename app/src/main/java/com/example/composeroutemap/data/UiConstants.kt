@@ -14,13 +14,14 @@ object Dimens {
     val LargePadding = 32.dp
 
     val NormalIconSize = 24.dp
-    val LargeIconSize = 32.dp
+    val LargeIconSize = 44.dp
 
     val SmallRoundedSize = 8.dp
 
     val SmallShadowElevation = 4.dp
 
     val TopBarHeight = 48.dp
+    val SearchBarHeight = 64.dp
 
     val NormalFloatingButtonSize = 54.dp
 

@@ -36,6 +36,7 @@ import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.NextButton
 import com.example.composeroutemap.ui.customwidget.ScrollColumnWithEdgeLine
 import com.example.composeroutemap.ui.customwidget.rememberHapticClick
+import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.gray_500
 import com.example.composeroutemap.ui.theme.gray_700
 import com.example.composeroutemap.ui.theme.gray_800
@@ -80,12 +81,12 @@ fun SearchScreen(navController: NavController) {
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        MainContent(places)
+        MainContent(places, navController)
     }
 }
 
 @Composable
-fun MainContent(places: SnapshotStateList<PlaceUiModel>) {
+fun MainContent(places: SnapshotStateList<PlaceUiModel>, navController: NavController) {
     Column {
         TitleView("최적의 경로를 알려드릴게요!")
         SubTitleView("장소를 추가해 주세요.")
@@ -94,7 +95,7 @@ fun MainContent(places: SnapshotStateList<PlaceUiModel>) {
             modifier = Modifier.weight(Weights.Fill),
             contentPadding = PaddingValues(horizontal = Dimens.NormalPadding)
         ){
-            PlaceContent(places)
+            PlaceContent(places, navController = navController)
         }
         NextButton(
             onClick = rememberHapticClick({ onClickNextButton() }),
@@ -138,10 +139,10 @@ fun SubTitleView(text: String) {
 }
 
 @Composable
-fun PlaceContent(places: SnapshotStateList<PlaceUiModel>) {
+fun PlaceContent(places: SnapshotStateList<PlaceUiModel>, navController: NavController) {
     AddedPlaceListView(places, modifier = Modifier.padding(horizontal = Dimens.NormalPadding))
     NextButton(
-        onClick = rememberHapticClick({onClickAddButton()}),
+        onClick = rememberHapticClick({onClickAddButton(navController)}),
         modifier = Modifier.padding(
             horizontal = Dimens.NormalPadding,
             vertical = Dimens.LargePadding
@@ -201,8 +202,8 @@ private fun PlaceItem(place: PlaceUiModel, onDelete: () -> Unit, modifier: Modif
     }
 }
 
-private fun onClickAddButton(){
-
+private fun onClickAddButton(navController: NavController){
+    navController.navigate(Screen.PlaceSearch.route)
 }
 
 private fun onClickNextButton(){
