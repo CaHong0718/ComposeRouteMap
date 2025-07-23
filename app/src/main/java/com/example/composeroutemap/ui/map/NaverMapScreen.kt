@@ -3,6 +3,7 @@ package com.example.composeroutemap.ui.map
 import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -93,8 +94,12 @@ private fun onClickMyLocationButton(
 
 @Composable
 fun SearchBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+    val interaction = remember { MutableInteractionSource() }
     Surface(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier.clickable(
+            interactionSource = interaction,
+            indication = null,
+        ) { onClick() },
         shape = RoundedCornerShape(Dimens.SmallRoundedSize),
         color = Color.White,
         shadowElevation = Dimens.SmallShadowElevation,

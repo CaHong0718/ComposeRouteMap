@@ -1,5 +1,6 @@
 package com.example.composeroutemap.ui.navigation
 
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -10,6 +11,10 @@ import com.example.composeroutemap.ui.map.NaverMapViewModel
 import com.example.composeroutemap.ui.map.rememberMapViewWithLifecycle
 import com.example.composeroutemap.ui.search.SearchScreen
 import com.example.composeroutemap.ui.splash.SplashScreen
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Left
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Right
+import com.example.composeroutemap.data.AnimationDelay
+import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -27,7 +32,15 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        composable(Screen.Map.route)        {
+        composable(
+            route = Screen.Map.route,
+            exitTransition = {
+                slideOutOfContainer(Left, tween(AnimationDelay.NormalDelay))
+            },
+            popEnterTransition = {
+                slideIntoContainer(Right, tween(AnimationDelay.NormalDelay))
+            }
+        ){
             val viewModel: NaverMapViewModel = viewModel()
 
             NaverMapScreen(
@@ -36,6 +49,15 @@ fun AppNavGraph(navController: NavHostController) {
                 mapView = mapView
             )
         }
-        composable(Screen.Search.route)     { SearchScreen(navController = navController) }
+
+        composable(
+            route = Screen.Search.route,
+            enterTransition = {
+                slideIntoContainer(Left, tween(AnimationDelay.NormalDelay))
+            },
+            popExitTransition = {
+                slideOutOfContainer(Right, tween(AnimationDelay.NormalDelay))
+            }
+        ){ SearchScreen(navController = navController) }
     }
 }

@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.sp
 object Dimens {
     val DividerHeight = 0.5.dp
 
+    val ZeroDP = 0.dp
+
     val SmallSmallPadding = 4.dp
     val SmallPadding = 8.dp
     val NormalPadding = 16.dp
@@ -36,5 +38,8 @@ object Weights {
 
 object FontSize{
     val SemiSmallFontSize = 20.sp
+}
 
+object AnimationDelay{
+    val NormalDelay = 200
 }
