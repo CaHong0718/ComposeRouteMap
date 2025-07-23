@@ -28,6 +28,7 @@ import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.customwidget.StatusBarIconColor
+import com.example.composeroutemap.ui.customwidget.rememberHapticClick
 import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.*
 import com.naver.maps.map.MapView
@@ -55,7 +56,7 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
                 .align(Alignment.TopCenter)
                 .height(Dimens.TopBarHeight),
             text = "장소, 주소 검색",
-            onClick = { onClickSearchBar(navController) }
+            onClick = rememberHapticClick(onClick = { onClickSearchBar(navController) })
         )
 
         MyLocationButton(
@@ -68,7 +69,7 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
 @Composable
 fun MyLocationButton(modifier: Modifier, onClick: () -> Unit) {
     FloatingActionButton(
-        onClick = onClick,
+        onClick = rememberHapticClick(onClick),
         modifier = modifier
             .padding(
                 start = Dimens.NormalPadding,
@@ -117,7 +118,7 @@ fun SearchBar(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) 
     }
 }
 
-private fun onClickSearchBar(navController: NavController){
+private fun onClickSearchBar(navController: NavController) {
     navController.navigate(Screen.Search.route)
 }
 

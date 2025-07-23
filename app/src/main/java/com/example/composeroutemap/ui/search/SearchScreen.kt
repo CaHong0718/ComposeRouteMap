@@ -35,6 +35,7 @@ import com.example.composeroutemap.data.FontSize
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.NextButton
 import com.example.composeroutemap.ui.customwidget.ScrollColumnWithEdgeLine
+import com.example.composeroutemap.ui.customwidget.rememberHapticClick
 import com.example.composeroutemap.ui.theme.gray_500
 import com.example.composeroutemap.ui.theme.gray_700
 import com.example.composeroutemap.ui.theme.gray_800
@@ -96,7 +97,7 @@ fun MainContent(places: SnapshotStateList<PlaceUiModel>) {
             PlaceContent(places)
         }
         NextButton(
-            onClick = {},
+            onClick = rememberHapticClick({ onClickNextButton() }),
             modifier = Modifier.padding(
                 start = Dimens.NormalPadding,
                 end = Dimens.NormalPadding,
@@ -140,7 +141,7 @@ fun SubTitleView(text: String) {
 fun PlaceContent(places: SnapshotStateList<PlaceUiModel>) {
     AddedPlaceListView(places, modifier = Modifier.padding(horizontal = Dimens.NormalPadding))
     NextButton(
-        onClick = {},
+        onClick = rememberHapticClick({onClickAddButton()}),
         modifier = Modifier.padding(
             horizontal = Dimens.NormalPadding,
             vertical = Dimens.LargePadding
@@ -172,7 +173,7 @@ fun AddedPlaceListView(places: SnapshotStateList<PlaceUiModel>, modifier: Modifi
         places.forEach { place ->
             PlaceItem(
                 place = place,
-                onDelete = { places.remove(place) }
+                onDelete = rememberHapticClick({ places.remove(place) })
             )
         }
     }
@@ -198,6 +199,14 @@ private fun PlaceItem(place: PlaceUiModel, onDelete: () -> Unit, modifier: Modif
             Icon(Icons.Default.Delete, contentDescription = "Delete Place")
         }
     }
+}
+
+private fun onClickAddButton(){
+
+}
+
+private fun onClickNextButton(){
+
 }
 
 @Preview(showBackground = true)
