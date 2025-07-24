@@ -144,8 +144,8 @@ fun PlaceContent(
         ),
         text = "추가하기",
         context = context,
-        enable = places.size < 14,
-        disableHint = "장소는 최대 14개까지만 추가할 수 있습니다."
+        enable = places.size < 10,
+        disableHint = "장소는 최대 10개까지만 추가할 수 있습니다."
     )
 }
 
