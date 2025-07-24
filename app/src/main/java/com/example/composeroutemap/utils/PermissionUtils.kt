@@ -11,8 +11,10 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.composeroutemap.data.LocationStore
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 val requiredPermissions = arrayOf(
     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -25,22 +27,33 @@ fun hasLocationPermission(context: Context): Boolean {
     }
 }
 
-suspend fun requestLocationPermissionsIfNeeded(activity: ComponentActivity): Boolean{
+suspend fun requestLocationPermissionsIfNeeded(activity: ComponentActivity): Boolean {
     if (hasLocationPermission(activity)) return true
 
-    val deferred = CompletableDeferred<Boolean>()
+    return suspendCancellableCoroutine { cont ->
+        // 고유 키 — 중복 방지
+        val key = "req_perm_${System.currentTimeMillis()}"
 
-    val launcher = activity.registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ){ result ->
-        deferred.complete(result.values.all { it })
+        var launcher: ActivityResultLauncher<Array<String>>? = null
+
+        launcher = activity.activityResultRegistry.register(
+            key,
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { result ->
+            val granted = result.values.all { it }
+            if (cont.isActive) cont.resume(granted) {}
+
+            launcher?.unregister()
+            launcher = null
+        }
+
+        launcher?.launch(requiredPermissions)
+
+        cont.invokeOnCancellation { launcher?.unregister() }
     }
-
-    launcher.launch(requiredPermissions)
-    return deferred.await()
 }
 
-fun checkLocationPermissionAnd(context: Context, function: () -> Unit){
+fun checkLocationPermissionAnd(context: Context, function: () -> Unit) {
     if (hasLocationPermission(context)) {
         function()
     } else {

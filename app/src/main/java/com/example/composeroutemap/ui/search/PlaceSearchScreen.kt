@@ -199,17 +199,24 @@ fun SearchedList(items: List<PlaceItem>, onUserInteract: () -> Unit) {
             }
     ) {
         items(items) { place ->
-            PlaceListItem(place)
+            PlaceListItem(
+                place = place,
+                onClick = { onClickPlaceItem() })
             DividerWidget()
         }
     }
 }
 
 @Composable
-private fun PlaceListItem(place: PlaceItem) {
+private fun PlaceListItem(place: PlaceItem, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(
+                onClick = rememberHapticClick(onClick = onClick),
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
             .padding(vertical = Dimens.SmallPadding, horizontal = Dimens.LargePadding),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -242,6 +249,10 @@ private fun PlaceListItem(place: PlaceItem) {
 
 private fun onClickBackButton(navController: NavController) {
     navController.navigateUp()
+}
+
+private fun onClickPlaceItem(){
+
 }
 
 @Preview(showBackground = true)

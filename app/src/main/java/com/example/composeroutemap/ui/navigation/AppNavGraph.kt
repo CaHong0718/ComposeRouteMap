@@ -16,6 +16,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.
 import com.example.composeroutemap.data.AnimationDelay
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.search.PlaceSearchScreen
+import com.example.composeroutemap.ui.search.PlaceSearchViewModel
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -52,6 +53,9 @@ fun AppNavGraph(navController: NavHostController) {
             slideOutOfContainer(Right, tween(AnimationDelay.NormalDelay))
         }) { SearchScreen(navController = navController) }
 
-        composable(route = Screen.PlaceSearch.route) { PlaceSearchScreen(navController = navController) }
+        composable(route = Screen.PlaceSearch.route) {
+            val viewModel: PlaceSearchViewModel = viewModel()
+            PlaceSearchScreen(navController = navController, viewModel = viewModel)
+        }
     }
 }
