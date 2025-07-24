@@ -29,6 +29,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.composeroutemap.R
 import com.example.composeroutemap.data.Dimens
+import com.example.composeroutemap.data.LocationStore
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.data.dpToPx
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
@@ -37,6 +38,7 @@ import com.example.composeroutemap.ui.customwidget.rememberHapticClick
 import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.search.SearchViewModel
 import com.example.composeroutemap.ui.theme.*
+import com.example.composeroutemap.utils.MapUtils
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.MapView
 import com.naver.maps.map.compose.Marker
@@ -77,18 +79,27 @@ fun NaverMapScreen(
             viewModel.placeMarkers.forEach{ it.map = null}
             viewModel.placeMarkers.clear()
 
-            // 새 마커 추가.
-            places.forEach{ p ->
-                Marker().apply {
-                    position = LatLng(p.lat!!, p.lng!!)
-                    captionText = p.name
-                    map = naverMap
-                    width = Dimens.SearchedMarkerSize.value.dpToPx()
-                    height = Dimens.SearchedMarkerSize.value.dpToPx()
-                    icon = OverlayImage.fromResource(R.drawable.marker)
-                    viewModel.placeMarkers += this
+            // 새 마커 추가 & 좌표 수집
+            val allPoints = buildList<LatLng> {
+                places.forEach { p ->
+                    val latLng = LatLng(p.lat!!, p.lng!!)
+                    add(latLng)                           // 카메라용 좌표 축적
+
+                    viewModel.placeMarkers += Marker().apply {
+                        position     = latLng
+                        captionText  = p.name
+                        icon         = OverlayImage.fromResource(R.drawable.marker)
+                        width        = Dimens.SearchedMarkerSize.value.dpToPx()
+                        height       = Dimens.SearchedMarkerSize.value.dpToPx()
+                        map          = naverMap
+                    }
                 }
+
+                add(LatLng(LocationStore.current?.latitude!!, LocationStore.current?.longitude!!))
             }
+
+
+            MapUtils.moveCameraToBounds(allPoints, naverMap, context)
         }
 
         /** 경로 그리기 */
