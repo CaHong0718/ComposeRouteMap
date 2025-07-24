@@ -35,6 +35,7 @@ class NaverMapViewModel : ViewModel() {
     fun setupNaverMap(context: Context, naverMap: NaverMap) {
         naverMap.uiSettings.isLocationButtonEnabled = false
         naverMap.uiSettings.isZoomControlEnabled = false
+        naverMap.uiSettings.isCompassEnabled = false
 
         checkLocationPermissionAnd(context, function = {
             // Tracking 비활성화

@@ -1,5 +1,7 @@
 package com.example.composeroutemap.ui.customwidget
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,24 +20,40 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.example.composeroutemap.data.FontSize
+import com.example.composeroutemap.ui.theme.gray_400
 import com.example.composeroutemap.ui.theme.gray_50
+import com.example.composeroutemap.utils.ToastUtils
 
 @Composable
 fun NextButton(
     modifier: Modifier = Modifier,
+    context: Context,
     onClick: () -> Unit,
     backgroundColor: Color = gray_900,
     textColor: Color = gray_50,
-    text: String = "계속하기"
+    text: String = "계속하기",
+    enable: Boolean = true,
+    disableHint: String = "아직은 이용할 수 없습니다.."
 ) {
+    val clickAction = rememberHapticClick ({
+        if (enable) {
+            onClick()
+        } else {
+            ToastUtils.show(context, disableHint)
+        }
+    })
+
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = backgroundColor,
+                color = if(enable) backgroundColor else gray_400,
                 shape = RoundedCornerShape(Dimens.SmallRoundedSize)
             )
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = clickAction
+            )
             .height(Dimens.NormalButtonHeight),
         contentAlignment = Alignment.Center
     ) {

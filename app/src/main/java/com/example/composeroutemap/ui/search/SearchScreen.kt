@@ -1,6 +1,7 @@
 package com.example.composeroutemap.ui.search
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
@@ -46,18 +48,20 @@ import kotlin.reflect.KFunction1
 @Composable
 fun SearchScreen(navController: NavController, viewModel: SearchViewModel) {
     val places by viewModel.selected.collectAsState()
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        MainContent(places, navController, viewModel::removePlace)
+        MainContent(context, places, navController, viewModel::removePlace)
     }
 }
 
 @Composable
 fun MainContent(
+    context: Context,
     places: List<PlaceUiModel>,
     navController: NavController,
     onDelete: (PlaceUiModel) -> Unit
@@ -70,16 +74,24 @@ fun MainContent(
             modifier = Modifier.weight(Weights.Fill),
             contentPadding = PaddingValues(horizontal = Dimens.NormalPadding)
         ) {
-            PlaceContent(places, navController = navController, onDelete = onDelete)
+            PlaceContent(
+                context = context,
+                places = places,
+                navController = navController,
+                onDelete = onDelete
+            )
         }
         NextButton(
-            onClick = rememberHapticClick({ onClickNextButton() }),
+            onClick = { onClickNextButton() },
+            context = context,
             modifier = Modifier.padding(
                 start = Dimens.NormalPadding,
                 end = Dimens.NormalPadding,
                 top = Dimens.NormalPadding,
                 bottom = Dimens.LargePadding
-            )
+            ),
+            enable = places.isNotEmpty(),
+            disableHint = "장소를 한개 이상 추가해 주세요!"
         )
     }
 }
@@ -115,6 +127,7 @@ fun SubTitleView(text: String) {
 
 @Composable
 fun PlaceContent(
+    context: Context,
     places: List<PlaceUiModel>,
     navController: NavController,
     onDelete: (PlaceUiModel) -> Unit
@@ -125,12 +138,15 @@ fun PlaceContent(
         onDelete = onDelete
     )
     NextButton(
-        onClick = rememberHapticClick({ onClickAddButton(navController) }),
+        onClick = { onClickAddButton(navController) },
         modifier = Modifier.padding(
             horizontal = Dimens.NormalPadding,
             vertical = Dimens.LargePadding
         ),
-        text = "추가하기"
+        text = "추가하기",
+        context = context,
+        enable = places.size < 15,
+        disableHint = "장소는 최대 15개까지만 추가할 수 있습니다."
     )
 }
 
@@ -194,6 +210,6 @@ private fun onClickNextButton() {
 private fun SearchScreenPreview() {
     SearchScreen(
         navController = rememberNavController(),
-        viewModel =  remember { SearchViewModel() }
+        viewModel = remember { SearchViewModel() }
     )
 }

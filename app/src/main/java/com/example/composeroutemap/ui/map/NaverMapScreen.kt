@@ -53,7 +53,10 @@ fun NaverMapScreen(navController: NavController, viewModel: NaverMapViewModel, m
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens.NormalPadding, vertical = Dimens.LargePadding)
+                .padding(
+                    horizontal = Dimens.NormalPadding,
+                    vertical = Dimens.LargePadding + Dimens.SmallPadding
+                )
                 .align(Alignment.TopCenter)
                 .height(Dimens.TopBarHeight),
             text = "장소, 주소 검색",
