@@ -2,6 +2,7 @@ package com.example.composeroutemap.ui.map
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -65,14 +66,6 @@ fun NaverMapScreen(
     val polyline by searchVm.polyline.collectAsState()
     val distance by searchVm.distance.collectAsState()
     val duration by searchVm.duration.collectAsState()
-    val pathOverlay = remember {
-        PathOverlay().apply {
-            color  = android.graphics.Color.GRAY
-            width  = 20
-            patternImage    = OverlayImage.fromResource(R.drawable.arrow_tile)
-            patternInterval = 80
-        }
-    }
 
 
     StatusBarIconColor(activity, darkIcons = true)
@@ -116,13 +109,13 @@ fun NaverMapScreen(
 
         /** 경로 그리기 */
         LaunchedEffect(polyline, viewModel.naverMap) {
-            val naverMap = viewModel.naverMap
+            val nMap = viewModel.naverMap ?: return@LaunchedEffect
 
-            if (polyline.size >= 2 && naverMap != null) {
-                pathOverlay.coords = polyline
-                if (pathOverlay.map != naverMap) pathOverlay.map = naverMap
-            } else {
-                pathOverlay.map = null
+            viewModel.currentOverlay.map = null
+
+            if (polyline.size >= 2) {
+                viewModel.currentOverlay.coords = polyline
+                viewModel.currentOverlay.map = nMap
             }
         }
 
