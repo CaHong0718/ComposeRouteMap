@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -39,11 +40,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.Place
 import com.example.composeroutemap.data.Weights
@@ -80,7 +79,8 @@ fun PlaceSearchScreen(
             SearchBar(
                 navController = navController,
                 query = uiState.query,
-                onQueryChange = viewModel::onQueryChange
+                onQueryChange = viewModel::onQueryChange,
+                focusManager = focusManager
             )
 
             Spacer(modifier = Modifier.height(Dimens.SmallPadding))
@@ -93,6 +93,7 @@ fun PlaceSearchScreen(
                 error = uiState.error,
                 onClickItem = { place ->
                     onPlaceSelected(place)
+                    focusManager.clearFocus()
                     navController.navigateUp()
                 },
                 onUserInteract = { focusManager.clearFocus() },
@@ -106,7 +107,8 @@ fun PlaceSearchScreen(
 fun SearchBar(
     navController: NavController,
     query: String,
-    onQueryChange: KFunction1<String, Unit>
+    onQueryChange: KFunction1<String, Unit>,
+    focusManager: FocusManager
 ) {
     Column(
         modifier = Modifier
@@ -114,7 +116,7 @@ fun SearchBar(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             BackButton(
-                onClick = { onClickBackButton(navController) },
+                onClick = { onClickBackButton(navController, focusManager) },
                 modifier = Modifier.padding(start = Dimens.SmallPadding)
             )
 
@@ -281,6 +283,7 @@ private fun PlaceListItem(place: Place, onClick: () -> Unit) {
     }
 }
 
-private fun onClickBackButton(navController: NavController) {
+private fun onClickBackButton(navController: NavController, focusManager: FocusManager) {
+    focusManager.clearFocus()
     navController.navigateUp()
 }

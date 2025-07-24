@@ -1,5 +1,6 @@
 package com.example.composeroutemap.ui.search
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -21,7 +20,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
@@ -40,53 +40,28 @@ import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.gray_500
 import com.example.composeroutemap.ui.theme.gray_700
 import com.example.composeroutemap.ui.theme.gray_800
-import kotlin.random.Random
-
-/** 데이터 모델 (로직 연결 전까지는 화면 전용 더미) */
-data class PlaceUiModel(
-    val id: Long = Random.nextLong(),
-    val name: String,
-    val address: String
-)
-
-/** ----------------------------------------------------------------------------------*/
+import kotlin.reflect.KFunction1
 
 
 @Composable
-fun SearchScreen(navController: NavController) {
-    val places = remember { mutableStateListOf<PlaceUiModel>() }
-    places.add(PlaceUiModel(name = "첫번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "두번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "세번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "네번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
-    places.add(PlaceUiModel(name = "5번째 장소", address = "여기는 주소가 1999.000"))
+fun SearchScreen(navController: NavController, viewModel: SearchViewModel) {
+    val places by viewModel.selected.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        MainContent(places, navController)
+        MainContent(places, navController, viewModel::removePlace)
     }
 }
 
 @Composable
-fun MainContent(places: SnapshotStateList<PlaceUiModel>, navController: NavController) {
+fun MainContent(
+    places: List<PlaceUiModel>,
+    navController: NavController,
+    onDelete: (PlaceUiModel) -> Unit
+) {
     Column {
         TitleView("최적의 경로를 알려드릴게요!")
         SubTitleView("장소를 추가해 주세요.")
@@ -94,8 +69,8 @@ fun MainContent(places: SnapshotStateList<PlaceUiModel>, navController: NavContr
         ScrollColumnWithEdgeLine(
             modifier = Modifier.weight(Weights.Fill),
             contentPadding = PaddingValues(horizontal = Dimens.NormalPadding)
-        ){
-            PlaceContent(places, navController = navController)
+        ) {
+            PlaceContent(places, navController = navController, onDelete = onDelete)
         }
         NextButton(
             onClick = rememberHapticClick({ onClickNextButton() }),
@@ -139,10 +114,18 @@ fun SubTitleView(text: String) {
 }
 
 @Composable
-fun PlaceContent(places: SnapshotStateList<PlaceUiModel>, navController: NavController) {
-    AddedPlaceListView(places, modifier = Modifier.padding(horizontal = Dimens.NormalPadding))
+fun PlaceContent(
+    places: List<PlaceUiModel>,
+    navController: NavController,
+    onDelete: (PlaceUiModel) -> Unit
+) {
+    AddedPlaceListView(
+        places,
+        modifier = Modifier.padding(horizontal = Dimens.NormalPadding),
+        onDelete = onDelete
+    )
     NextButton(
-        onClick = rememberHapticClick({onClickAddButton(navController)}),
+        onClick = rememberHapticClick({ onClickAddButton(navController) }),
         modifier = Modifier.padding(
             horizontal = Dimens.NormalPadding,
             vertical = Dimens.LargePadding
@@ -152,7 +135,11 @@ fun PlaceContent(places: SnapshotStateList<PlaceUiModel>, navController: NavCont
 }
 
 @Composable
-fun AddedPlaceListView(places: SnapshotStateList<PlaceUiModel>, modifier: Modifier = Modifier) {
+fun AddedPlaceListView(
+    places: List<PlaceUiModel>,
+    modifier: Modifier = Modifier,
+    onDelete: (PlaceUiModel) -> Unit
+) {
     if (places.isEmpty()) {
         Text(
             "추가한 장소가 없습니다...",
@@ -161,20 +148,11 @@ fun AddedPlaceListView(places: SnapshotStateList<PlaceUiModel>, modifier: Modifi
             color = gray_500
         )
     } else {
-        /*LazyColumn(
-            modifier = modifier,
-            //verticalArrangement = Arrangement.spacedBy(Dimens.SmallSmallPadding),
-            contentPadding = PaddingValues(vertical = Dimens.SmallPadding)
-        ) {
-            items(places) { place ->
-                PlaceItem(place = place, onDelete = { places.remove(place) })
-            }
-        }*/
 
         places.forEach { place ->
             PlaceItem(
                 place = place,
-                onDelete = rememberHapticClick({ places.remove(place) })
+                onDelete = rememberHapticClick({ onDelete(place) })
             )
         }
     }
@@ -202,18 +180,20 @@ private fun PlaceItem(place: PlaceUiModel, onDelete: () -> Unit, modifier: Modif
     }
 }
 
-private fun onClickAddButton(navController: NavController){
+private fun onClickAddButton(navController: NavController) {
     navController.navigate(Screen.PlaceSearch.route)
 }
 
-private fun onClickNextButton(){
+private fun onClickNextButton() {
 
 }
+
 
 @Preview(showBackground = true)
 @Composable
 private fun SearchScreenPreview() {
     SearchScreen(
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        viewModel =  remember { SearchViewModel() }
     )
 }

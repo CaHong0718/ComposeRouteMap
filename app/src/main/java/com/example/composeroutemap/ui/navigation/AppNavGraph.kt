@@ -17,12 +17,15 @@ import com.example.composeroutemap.data.AnimationDelay
 import com.example.composeroutemap.ui.customwidget.RouteMapIcon
 import com.example.composeroutemap.ui.search.PlaceSearchScreen
 import com.example.composeroutemap.ui.search.PlaceSearchViewModel
+import com.example.composeroutemap.ui.search.SearchViewModel
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
 
     // 초기에 생성하여 관리
     val mapView = rememberMapViewWithLifecycle()
+    val searchVm: SearchViewModel = viewModel()
+
 
     NavHost(navController, startDestination = Screen.Splash.route) {
         composable(Screen.Splash.route) {
@@ -51,11 +54,10 @@ fun AppNavGraph(navController: NavHostController) {
             slideIntoContainer(Left, tween(AnimationDelay.NormalDelay))
         }, popExitTransition = {
             slideOutOfContainer(Right, tween(AnimationDelay.NormalDelay))
-        }) { SearchScreen(navController = navController) }
+        }) { SearchScreen(navController = navController, viewModel = searchVm) }
 
         composable(route = Screen.PlaceSearch.route) {
-            val viewModel: PlaceSearchViewModel = viewModel()
-            PlaceSearchScreen(navController = navController, viewModel = viewModel)
+            PlaceSearchScreen(navController = navController, onPlaceSelected = searchVm::addPlace)
         }
     }
 }
