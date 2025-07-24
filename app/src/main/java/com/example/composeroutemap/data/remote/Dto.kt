@@ -31,3 +31,21 @@ data class PlaceDto(
         )
     }
 }
+
+data class DirectionsDto(
+    val route: Route
+) {
+    data class Route(
+        val trafast: List<Trafast>
+    )
+
+    data class Trafast(
+        val summary: Summary,
+        val path: List<List<Double>>
+    )
+
+    data class Summary(
+        val distance: Int,
+        val duration: Int
+    )
+}

@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose") version libs.versions.kotlin.get()
+    id("com.google.dagger.hilt.android") version "2.50"
+    id("kotlin-kapt")
 }
 
 android {
@@ -32,6 +34,8 @@ android {
 
         buildConfigField("String", "NAVER_OPENAPI_CLIENT_ID", "\"${props.getProperty("NAVER_OPENAPI_CLIENT_ID")}\"")
         buildConfigField("String", "NAVER_OPENAPI_CLIENT_SECRET", "\"${props.getProperty("NAVER_OPENAPI_CLIENT_SECRET")}\"")
+        buildConfigField("String", "NAVER_MAP_API_CLIENT_ID", "\"${props.getProperty("naver_api_key")}\"")
+        buildConfigField("String", "NAVER_MAP_API_CLIENT_SECRET", "\"${props.getProperty("NAVER_MAP_API_CLIENT_SECRET")}\"")
 
         resValue(
             "string",
@@ -108,4 +112,11 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation("com.squareup.moshi:moshi:1.15.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
+    kapt ("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-compiler:2.50")
 }

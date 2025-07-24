@@ -42,6 +42,7 @@ import com.naver.maps.map.MapView
 import com.naver.maps.map.compose.Marker
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.overlay.PathOverlay
 
 
 @Composable
@@ -55,6 +56,8 @@ fun NaverMapScreen(
     val activity = context as Activity
     val places by searchVm.places.collectAsState()
     val isLoading by searchVm.loading.collectAsState()
+    val polyline by searchVm.polyline.collectAsState()
+    var pathOverlay by remember { mutableStateOf<PathOverlay?>(null) }
 
 
     StatusBarIconColor(activity, darkIcons = true)
@@ -84,6 +87,23 @@ fun NaverMapScreen(
                     height = Dimens.SearchedMarkerSize.value.dpToPx()
                     icon = OverlayImage.fromResource(R.drawable.marker)
                     viewModel.placeMarkers += this
+                }
+            }
+        }
+
+        /** 경로 그리기 */
+        LaunchedEffect(polyline, viewModel.naverMap) {
+            val naverMap = viewModel.naverMap ?: return@LaunchedEffect
+            pathOverlay?.map = null
+            if (polyline.size >= 2) {
+                pathOverlay = PathOverlay().apply {
+                    coords = polyline
+                    color  = android.graphics.Color.GRAY
+                    width  = 20
+                    map    = naverMap
+
+                    patternImage    = OverlayImage.fromResource(R.drawable.arrow_tile)
+                    patternInterval = 80
                 }
             }
         }

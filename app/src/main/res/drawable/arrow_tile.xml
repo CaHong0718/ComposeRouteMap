@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_arrow_tile_up.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    <path
+        android:fillColor="#FF000000"
+        android:strokeColor="#D9D9D9"
+        android:strokeWidth="2"
+        android:pathData="M16,8 L30,24 L2,24 Z"/>
+</vector>

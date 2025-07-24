@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.data.Dimens
 import com.example.composeroutemap.data.FontSize
+import com.example.composeroutemap.data.MAX_PLACE
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.NextButton
 import com.example.composeroutemap.ui.customwidget.ScrollColumnWithEdgeLine
@@ -144,8 +145,8 @@ fun PlaceContent(
         ),
         text = "추가하기",
         context = context,
-        enable = places.size < 10,
-        disableHint = "장소는 최대 10개까지만 추가할 수 있습니다."
+        enable = places.size < MAX_PLACE,
+        disableHint = "장소는 최대 ${MAX_PLACE}개까지만 추가할 수 있습니다."
     )
 }
 

@@ -21,3 +21,6 @@ object MapMarkers {
 
 fun Float.dpToPx(): Int =
     (this * Resources.getSystem().displayMetrics.density).roundToInt()
+
+
+const val MAX_PLACE = 10
