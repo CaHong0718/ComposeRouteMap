@@ -17,6 +17,7 @@ object Dimens {
     val LargeIconSize = 44.dp
 
     val SmallRoundedSize = 8.dp
+    val NormalRoundedSize = 8.dp
 
     val SmallShadowElevation = 4.dp
 

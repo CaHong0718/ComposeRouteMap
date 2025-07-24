@@ -2,6 +2,7 @@ package com.example.composeroutemap.data.remote
 
 import com.example.composeroutemap.data.Place
 import com.google.gson.annotations.SerializedName
+import com.naver.maps.geometry.LatLng
 
 data class PlaceSearchResponse(
     val total: Int,
@@ -49,3 +50,9 @@ data class DirectionsDto(
         val duration: Int
     )
 }
+
+data class RouteSearchResult(
+    val routes: List<LatLng>,
+    val distance: Int,
+    val duration: Int
+)

@@ -8,13 +8,17 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -59,7 +63,16 @@ fun NaverMapScreen(
     val places by searchVm.places.collectAsState()
     val isLoading by searchVm.loading.collectAsState()
     val polyline by searchVm.polyline.collectAsState()
-    var pathOverlay by remember { mutableStateOf<PathOverlay?>(null) }
+    val distance by searchVm.distance.collectAsState()
+    val duration by searchVm.duration.collectAsState()
+    val pathOverlay = remember {
+        PathOverlay().apply {
+            color  = android.graphics.Color.GRAY
+            width  = 20
+            patternImage    = OverlayImage.fromResource(R.drawable.arrow_tile)
+            patternInterval = 80
+        }
+    }
 
 
     StatusBarIconColor(activity, darkIcons = true)
@@ -72,11 +85,12 @@ fun NaverMapScreen(
             }
         }
 
+
         /** 장소가 변경 될때 마커 갱신*/
         LaunchedEffect(places, viewModel.naverMap) {
             val naverMap = viewModel.naverMap ?: return@LaunchedEffect
 
-            viewModel.placeMarkers.forEach{ it.map = null}
+            viewModel.placeMarkers.forEach { it.map = null }
             viewModel.placeMarkers.clear()
 
             // 새 마커 추가 & 좌표 수집
@@ -86,36 +100,29 @@ fun NaverMapScreen(
                     add(latLng)                           // 카메라용 좌표 축적
 
                     viewModel.placeMarkers += Marker().apply {
-                        position     = latLng
-                        captionText  = p.name
-                        icon         = OverlayImage.fromResource(R.drawable.marker)
-                        width        = Dimens.SearchedMarkerSize.value.dpToPx()
-                        height       = Dimens.SearchedMarkerSize.value.dpToPx()
-                        map          = naverMap
+                        position = latLng
+                        captionText = p.name
+                        icon = OverlayImage.fromResource(R.drawable.marker)
+                        width = Dimens.SearchedMarkerSize.value.dpToPx()
+                        height = Dimens.SearchedMarkerSize.value.dpToPx()
+                        map = naverMap
                     }
                 }
-
                 add(LatLng(LocationStore.current?.latitude!!, LocationStore.current?.longitude!!))
             }
-
 
             MapUtils.moveCameraToBounds(allPoints, naverMap, context)
         }
 
         /** 경로 그리기 */
         LaunchedEffect(polyline, viewModel.naverMap) {
-            val naverMap = viewModel.naverMap ?: return@LaunchedEffect
-            pathOverlay?.map = null
-            if (polyline.size >= 2) {
-                pathOverlay = PathOverlay().apply {
-                    coords = polyline
-                    color  = android.graphics.Color.GRAY
-                    width  = 20
-                    map    = naverMap
+            val naverMap = viewModel.naverMap
 
-                    patternImage    = OverlayImage.fromResource(R.drawable.arrow_tile)
-                    patternInterval = 80
-                }
+            if (polyline.size >= 2 && naverMap != null) {
+                pathOverlay.coords = polyline
+                if (pathOverlay.map != naverMap) pathOverlay.map = naverMap
+            } else {
+                pathOverlay.map = null
             }
         }
 
@@ -137,7 +144,7 @@ fun NaverMapScreen(
             onClick = { onClickMyLocationButton(viewModel, context) }
         )
 
-        if (isLoading){
+        if (isLoading) {
             Box(
                 Modifier
                     .fillMaxSize()
@@ -150,6 +157,39 @@ fun NaverMapScreen(
                     color = gray_50
                 )
             }
+        }
+
+        duration?.let {
+            RouteInfoBar(
+                distance = distance!!,
+                duration = duration!!,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = Dimens.LargePadding+Dimens.SmallPadding, end = Dimens.NormalPadding),
+            )
+        }
+    }
+}
+
+@Composable
+fun RouteInfoBar(
+    distance: Int,
+    duration: Int,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(Dimens.NormalRoundedSize),
+        shadowElevation = Dimens.SmallShadowElevation,
+    ) {
+        Row(
+            Modifier.padding(horizontal = Dimens.NormalPadding, vertical = Dimens.NormalPadding),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.NormalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(distance.formatDistance(), style = MaterialTheme.typography.labelLarge)
+            Spacer(Modifier.height(Dimens.NormalPadding))
+            Text(duration.formatDuration(), style = MaterialTheme.typography.labelLarge)
         }
     }
 }
@@ -214,5 +254,16 @@ private fun onClickSearchBar(navController: NavController) {
     navController.navigate(Screen.Search.route)
 }
 
+/** 거리(m) → “1.3 km / 850 m” */
+private fun Int.formatDistance(): String =
+    if (this >= 1000) "%.1f km".format(this / 1000f) else "${this} m"
+
+/** 시간(ms) → “17분” “1시간 05분” */
+private fun Int.formatDuration(): String {
+    val totalMin = this / 1000 / 60
+    val h = totalMin / 60
+    val m = totalMin % 60
+    return if (h > 0) "${h}시간 ${m}분" else "${m}분"
+}
 
 

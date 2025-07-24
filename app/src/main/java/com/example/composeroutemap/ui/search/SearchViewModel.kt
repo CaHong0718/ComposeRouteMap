@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.composeroutemap.data.LocationStore.current
 import com.example.composeroutemap.data.Place
+import com.example.composeroutemap.data.remote.RouteSearchResult
 import com.example.composeroutemap.data.repository.RouteRepository
 import com.example.composeroutemap.utils.ServiceLocator
 import com.naver.maps.geometry.LatLng
@@ -37,8 +38,14 @@ class SearchViewModel(private val repo: RouteRepository = ServiceLocator.routeRe
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
 
-    private val _polyline = MutableStateFlow<List<LatLng>>(emptyList())  // NEW
+    private val _polyline = MutableStateFlow<List<LatLng>>(emptyList())
     val polyline = _polyline.asStateFlow()
+
+    private val _distance = MutableStateFlow<Int?>(null)
+    val  distance: StateFlow<Int?> = _distance.asStateFlow()
+
+    private val _duration = MutableStateFlow<Int?>(null)
+    val  duration: StateFlow<Int?> = _duration.asStateFlow()
 
     fun addPlace(place: Place) = _places.update { list ->
         if (list.any { it.name == place.name && it.roadAddress == place.roadAddress }) list
@@ -69,7 +76,11 @@ class SearchViewModel(private val repo: RouteRepository = ServiceLocator.routeRe
             )
             val all = listOf(startPlace) + places.value
 
-            _polyline.value = repo.calcRoutePolyline(all)
+            val result = repo.calcRoutePolyline(all)
+            _polyline.value = result.routes
+            _distance.value = result.distance
+            _duration.value = result.duration
+
         } finally { _loading.value = false }
     }
 }

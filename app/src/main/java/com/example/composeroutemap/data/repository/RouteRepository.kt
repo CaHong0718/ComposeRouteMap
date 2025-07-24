@@ -3,6 +3,7 @@ package com.example.composeroutemap.data.repository
 import com.example.composeroutemap.data.Place
 import com.example.composeroutemap.data.remote.DirectionsDto
 import com.example.composeroutemap.data.remote.NaverDirectionsApiService
+import com.example.composeroutemap.data.remote.RouteSearchResult
 import com.example.composeroutemap.domain.algorithm.heldKarp
 import com.example.composeroutemap.utils.Point
 import com.example.composeroutemap.utils.buildDistanceMatrix
@@ -17,7 +18,7 @@ class RouteRepository(
 ) {
 
     /** 1) 거리 기준 최적 순서 → 2) Directions 5/15 한 번 호출 → polyline */
-    suspend fun calcRoutePolyline(all: List<Place>): List<LatLng> =
+    suspend fun calcRoutePolyline(all: List<Place>): RouteSearchResult =
         withContext(Dispatchers.Default) {
             /* --- 1. 거리행렬 & Held-Karp --- */
             val pts = all.map { Point(it.lat!!, it.lng!!) }
@@ -47,6 +48,10 @@ class RouteRepository(
 
             /* --- 3. 응답 → Polyline 좌표 변환 --- */
             val path = resp.route.trafast[0].path         // [[lng,lat],…]
-            path.map { LatLng(it[1], it[0]) }             // 최종 반환
+            val routes = path.map { LatLng(it[1], it[0]) }
+            val distance = resp.route.trafast[0].summary.distance
+            val duration = resp.route.trafast[0].summary.duration
+
+            RouteSearchResult(routes = routes, distance = distance, duration = duration)
         }
 }
