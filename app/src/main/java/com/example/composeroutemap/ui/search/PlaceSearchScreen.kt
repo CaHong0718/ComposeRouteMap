@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,16 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -46,8 +37,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.data.Dimens
@@ -55,11 +46,9 @@ import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.DividerWidget
 import com.example.composeroutemap.ui.customwidget.rememberHapticClick
 import com.example.composeroutemap.ui.theme.gray_300
-import com.example.composeroutemap.ui.theme.gray_400
 import com.example.composeroutemap.ui.theme.gray_700
-import com.example.composeroutemap.ui.theme.gray_800
 import com.example.composeroutemap.ui.theme.gray_900
-import kotlinx.coroutines.flow.filter
+import kotlin.reflect.KFunction1
 
 
 /* ---------- Ui State & Dummy ----------- */
@@ -96,16 +85,10 @@ private val dummyPlaces = listOf(
 
 
 @Composable
-fun PlaceSearchScreen(navController: NavController) {
+fun PlaceSearchScreen(navController: NavController, viewModel: PlaceSearchViewModel = viewModel()) {
     val focusManager = LocalFocusManager.current
 
-    var query by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(
-            TextFieldValue(
-                ""
-            )
-        )
-    }
+    val query by viewModel::query
 
     Box(
         modifier = Modifier
@@ -120,7 +103,7 @@ fun PlaceSearchScreen(navController: NavController) {
             SearchBar(
                 navController = navController,
                 query = query,
-                onQueryChange = { query = it }
+                onQueryChange = viewModel::onQueryChange
             )
             Spacer(modifier = Modifier.height(Dimens.SmallPadding))
             DividerWidget()
@@ -133,8 +116,8 @@ fun PlaceSearchScreen(navController: NavController) {
 @Composable
 fun SearchBar(
     navController: NavController,
-    query: TextFieldValue,
-    onQueryChange: (TextFieldValue) -> Unit
+    query: String,
+    onQueryChange: KFunction1<String, Unit>
 ) {
     Column(
         modifier = Modifier
