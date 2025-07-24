@@ -12,7 +12,8 @@ object MapUtils {
         points: List<LatLng>,
         naverMap: NaverMap?,
         context: Context,
-        paddingDp: Int = 48
+        paddingDp: Int = 48,
+        expandRatio: Double = 0.15
     ) {
         if (naverMap == null || points.isEmpty()) return
 
@@ -25,16 +26,32 @@ object MapUtils {
             return
         }
 
-        // 여러 포인트 → LatLngBounds 계산
-        val bounds = LatLngBounds.Builder().apply {
-            points.forEach { include(it) }
-        }.build()
+        // bounds 계산
+        val builder = LatLngBounds.Builder()
+        points.forEach { builder.include(it) }
+        val bounds = builder.build()
 
-        // dp → px 변환
+        // bounds 확장
+        val centerLat = (bounds.southWest.latitude + bounds.northEast.latitude) / 2
+        val centerLng = (bounds.southWest.longitude + bounds.northEast.longitude) / 2
+        val latSpan = bounds.northEast.latitude - bounds.southWest.latitude
+        val lngSpan = bounds.northEast.longitude - bounds.southWest.longitude
+
+        val expandedBounds = LatLngBounds(
+            LatLng(
+                centerLat - latSpan * (0.5 + expandRatio),
+                centerLng - lngSpan * (0.5 + expandRatio)
+            ),
+            LatLng(
+                centerLat + latSpan * (0.5 + expandRatio),
+                centerLng + lngSpan * (0.5 + expandRatio)
+            )
+        )
+
         val px = (paddingDp * context.resources.displayMetrics.density).toInt()
 
         naverMap.moveCamera(
-            CameraUpdate.fitBounds(bounds, px)
+            CameraUpdate.fitBounds(expandedBounds, px)
                 .animate(CameraAnimation.Easing, 600)
         )
     }
