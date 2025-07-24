@@ -29,6 +29,20 @@ android {
 
         //네이버 지도
         manifestPlaceholders["NAVER_CLIENT_ID"] = props.getProperty("naver_api_key")
+
+        buildConfigField("String", "NAVER_OPENAPI_CLIENT_ID", "\"${props.getProperty("NAVER_OPENAPI_CLIENT_ID")}\"")
+        buildConfigField("String", "NAVER_OPENAPI_CLIENT_SECRET", "\"${props.getProperty("NAVER_OPENAPI_CLIENT_SECRET")}\"")
+
+        resValue(
+            "string",
+            "naver_openapi_client_id",
+            props["NAVER_OPENAPI_CLIENT_ID"] as String
+        )
+        resValue(
+            "string",
+            "naver_openapi_client_secret",
+            props["NAVER_OPENAPI_CLIENT_SECRET"] as String
+        )
     }
 
     buildTypes {
@@ -49,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -88,4 +103,9 @@ dependencies {
 
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.navigation:navigation-compose:2.7.7")
+
+
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
