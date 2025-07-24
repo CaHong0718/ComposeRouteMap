@@ -15,14 +15,19 @@ data class PlaceDto(
     val address: String,
     @SerializedName("roadAddress") val roadAddress: String,
     val link: String,
-    val mapx: String, // 경도 TODO: LatLng 표기로 변수명 변경
+    val mapx: String, // 경도
     val mapy: String // 위도
 ){
-    fun toDomain() = Place(
-        name = title.replace(Regex("<[/]?b>"), ""), // <b> 태그 제거
-        category = category,
-        roadAddress = roadAddress.ifBlank { address },
-        lat = mapy.toDoubleOrNull()?.div(1e6),
-        lng = mapx.toDoubleOrNull()?.div(1e6)
-    )
+    fun toDomain(): Place {
+        val lon = mapx.toDoubleOrNull()?.div(10_000_000)   // 126.xxx
+        val lat = mapy.toDoubleOrNull()?.div(10_000_000)   // 37.xxx
+
+        return Place(
+            name        = title.replace(Regex("<[/]?b>"), ""),
+            category    = category,
+            roadAddress = roadAddress.ifBlank { address },
+            lat         = lat,
+            lng         = lon
+        )
+    }
 }

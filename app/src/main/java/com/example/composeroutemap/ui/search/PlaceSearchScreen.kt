@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,57 +40,31 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.data.Dimens
+import com.example.composeroutemap.data.Place
 import com.example.composeroutemap.data.Weights
 import com.example.composeroutemap.ui.customwidget.DividerWidget
 import com.example.composeroutemap.ui.customwidget.rememberHapticClick
 import com.example.composeroutemap.ui.theme.gray_300
 import com.example.composeroutemap.ui.theme.gray_700
 import com.example.composeroutemap.ui.theme.gray_900
+import com.example.composeroutemap.utils.formatMeter
 import kotlin.reflect.KFunction1
 
 
-/* ---------- Ui State & Dummy ----------- */
-
-data class PlaceItem(
-    val name: String,
-    val address: String,
-    val category: String = "",
-    val distanceMeter: Int = 0
-)
-
-private val dummyPlaces = listOf(
-    PlaceItem("스타벅스 판교아브뉴프랑점", "경기 성남시 분당구 삼평동 740", "카페 • 커피", 120),
-    PlaceItem("이마트 성수점", "서울 성동구 뚝섬로 379", "대형마트", 310),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-    PlaceItem("도토리숲 어린이집", "서울 송파구 위례성대로 51", "유아교육", 420),
-)
-
-
 @Composable
-fun PlaceSearchScreen(navController: NavController, viewModel: PlaceSearchViewModel = viewModel()) {
+fun PlaceSearchScreen(
+    navController: NavController,
+    viewModel: PlaceSearchViewModel = viewModel(),
+    onPlaceSelected: (Place) -> Unit = {}
+) {
     val focusManager = LocalFocusManager.current
 
-    val query by viewModel::query
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -100,14 +76,27 @@ fun PlaceSearchScreen(navController: NavController, viewModel: PlaceSearchViewMo
     ) {
         Column {
             Spacer(modifier = Modifier.height(Dimens.SmallPadding))
+
             SearchBar(
                 navController = navController,
-                query = query,
+                query = uiState.query,
                 onQueryChange = viewModel::onQueryChange
             )
+
             Spacer(modifier = Modifier.height(Dimens.SmallPadding))
+
             DividerWidget()
-            SearchedList(items = dummyPlaces, onUserInteract = { focusManager.clearFocus() })
+
+            SearchedList(
+                items = uiState.items,
+                isLoading = uiState.isLoading,
+                error = uiState.error,
+                onClickItem = { place ->
+                    onPlaceSelected(place)
+                    navController.navigateUp()
+                },
+                onUserInteract = { focusManager.clearFocus() },
+            )
         }
     }
 }
@@ -176,7 +165,13 @@ fun BackButton(onClick: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun SearchedList(items: List<PlaceItem>, onUserInteract: () -> Unit) {
+fun SearchedList(
+    items: List<Place>,
+    onUserInteract: () -> Unit,
+    isLoading: Boolean,
+    error: String?,
+    onClickItem: (Place) -> Unit
+) {
     val hideKeyboardOnDrag = remember {
         object : NestedScrollConnection {
             override fun onPreScroll(
@@ -190,25 +185,56 @@ fun SearchedList(items: List<PlaceItem>, onUserInteract: () -> Unit) {
             }
         }
     }
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(hideKeyboardOnDrag)
-            .pointerInput(Unit) {
-                detectTapGestures { onUserInteract() }
-            }
+            .pointerInput(Unit) { detectTapGestures { onUserInteract() } }
     ) {
-        items(items) { place ->
-            PlaceListItem(
-                place = place,
-                onClick = { onClickPlaceItem() })
-            DividerWidget()
+        when {
+            isLoading -> {
+                /* 진행 중 – 센터 로딩 */
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            error != null -> {
+                /* 실패 메시지 */
+                Text(
+                    text = error,
+                    color = Color.Red,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(Dimens.NormalPadding)
+                )
+            }
+
+            items.isEmpty() -> {
+                /* 결과 없음 */
+                Text(
+                    text = "검색 결과가 없습니다",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = gray_700,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            else -> {
+                /* 리스트 표시 */
+                LazyColumn {
+                    items(items) { place ->
+                        PlaceListItem(place = place) { onClickItem(place) }
+                        DividerWidget()
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun PlaceListItem(place: PlaceItem, onClick: () -> Unit) {
+private fun PlaceListItem(place: Place, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -221,12 +247,15 @@ private fun PlaceListItem(place: PlaceItem, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
+        Column(
+            modifier = Modifier.weight(Weights.Fill),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(text = place.name, style = MaterialTheme.typography.bodyLarge)
             Spacer(Modifier.height(Dimens.SmallSmallPadding))
             Text(
-                text = place.address,
-                style = MaterialTheme.typography.bodyMedium.copy(color = gray_700)
+                text = place.roadAddress,
+                style = MaterialTheme.typography.bodySmall.copy(color = gray_700)
             )
         }
 
@@ -239,26 +268,19 @@ private fun PlaceListItem(place: PlaceItem, onClick: () -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = gray_700
             )
-            if (place.distanceMeter > 0) {
-                Spacer(Modifier.height(Dimens.SmallSmallPadding))
-                Text("${place.distanceMeter}m", style = MaterialTheme.typography.bodySmall)
-            }
+
+            Spacer(Modifier.height(Dimens.SmallSmallPadding))
+
+
+            Text(
+                text = place.distanceMeter.formatMeter(),
+                style = MaterialTheme.typography.bodySmall
+            )
+
         }
     }
 }
 
 private fun onClickBackButton(navController: NavController) {
     navController.navigateUp()
-}
-
-private fun onClickPlaceItem(){
-
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SearchScreenPreview() {
-    PlaceSearchScreen(
-        navController = rememberNavController()
-    )
 }
