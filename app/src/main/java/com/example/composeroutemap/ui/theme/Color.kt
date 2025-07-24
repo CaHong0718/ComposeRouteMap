@@ -21,3 +21,5 @@ val gray_600 = Color(0xFF686868);
 val gray_700 = Color(0xFF4E4E4E);
 val gray_800 = Color(0xFF353535);
 val gray_900 = Color(0xFF1C1C1C);
+
+val loading_background = Color(0x80000000)

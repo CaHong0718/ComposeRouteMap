@@ -1,6 +1,5 @@
 package com.example.composeroutemap.ui.search
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.composeroutemap.data.Dimens
@@ -42,12 +41,11 @@ import com.example.composeroutemap.ui.navigation.Screen
 import com.example.composeroutemap.ui.theme.gray_500
 import com.example.composeroutemap.ui.theme.gray_700
 import com.example.composeroutemap.ui.theme.gray_800
-import kotlin.reflect.KFunction1
 
 
 @Composable
 fun SearchScreen(navController: NavController, viewModel: SearchViewModel) {
-    val places by viewModel.selected.collectAsState()
+    val uiPlaces by viewModel.ui.collectAsState()
     val context = LocalContext.current
 
     Box(
@@ -55,7 +53,7 @@ fun SearchScreen(navController: NavController, viewModel: SearchViewModel) {
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        MainContent(context, places, navController, viewModel::removePlace)
+        MainContent(context, uiPlaces, navController, viewModel, viewModel::removePlace)
     }
 }
 
@@ -64,6 +62,7 @@ fun MainContent(
     context: Context,
     places: List<PlaceUiModel>,
     navController: NavController,
+    viewModel: SearchViewModel,
     onDelete: (PlaceUiModel) -> Unit
 ) {
     Column {
@@ -82,7 +81,7 @@ fun MainContent(
             )
         }
         NextButton(
-            onClick = { onClickNextButton() },
+            onClick = { onClickNextButton(navController, viewModel) },
             context = context,
             modifier = Modifier.padding(
                 start = Dimens.NormalPadding,
@@ -200,8 +199,9 @@ private fun onClickAddButton(navController: NavController) {
     navController.navigate(Screen.PlaceSearch.route)
 }
 
-private fun onClickNextButton() {
-
+private fun onClickNextButton(navController: NavController, viewModel: SearchViewModel) {
+    viewModel.calculateOptimalRoute()
+    navController.navigateUp()
 }
 
 

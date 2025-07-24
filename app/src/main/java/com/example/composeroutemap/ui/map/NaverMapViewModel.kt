@@ -15,10 +15,12 @@ import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.NaverMap
+import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.util.FusedLocationSource
 
 class NaverMapViewModel : ViewModel() {
     var naverMap: NaverMap? = null
+    val placeMarkers = mutableListOf<Marker>()
 
     private fun moveToMyLocation(lat: Double, lng: Double) {
         val update = CameraUpdate.scrollAndZoomTo(LatLng(lat, lng), Dimens.DefaultCameraZoom)

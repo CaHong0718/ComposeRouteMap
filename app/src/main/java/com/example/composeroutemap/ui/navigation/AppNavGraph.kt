@@ -46,7 +46,10 @@ fun AppNavGraph(navController: NavHostController) {
             val viewModel: NaverMapViewModel = viewModel()
 
             NaverMapScreen(
-                navController = navController, viewModel = viewModel, mapView = mapView
+                navController = navController,
+                viewModel = viewModel,
+                mapView = mapView,
+                searchVm = searchVm
             )
         }
 

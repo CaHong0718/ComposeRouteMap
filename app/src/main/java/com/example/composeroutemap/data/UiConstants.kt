@@ -25,7 +25,9 @@ object Dimens {
 
     val NormalFloatingButtonSize = 54.dp
 
-    val MyLocationMarkerSize = 58
+    val MyLocationMarkerSize = 18.dp
+    val SearchedMarkerSize = 40.dp
+
 
     val DefaultCameraZoom:Double = 14.0
 
