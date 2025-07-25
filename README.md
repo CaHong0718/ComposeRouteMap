@@ -37,4 +37,6 @@ app/src/main/
 │  └─ utils/      (MapUtils, permission helpers)
 └─ res/           (layouts, drawables)
 ```
+## 📱 다운로드
 
+[▶️ 앱 다운로드 (.apk)](https://github.com/CaHong0718/ComposeRouteMap/raw/refs/heads/master/releases/download/v1.0.0/app-release.apk)
